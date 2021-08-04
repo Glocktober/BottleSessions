@@ -1,6 +1,6 @@
 
 ### About The Session
-####Session notes:
+#### Session notes:
 * Sessions are used for authentication and other middleware, shopping carts, forms requiring multiple views, and other web app needs.
 
 * BottleSession sessions are stored on the server-side.  
@@ -33,9 +33,9 @@ The **`Session`** class adds only a couple for public use:
 
     session.session_modified = True
 ```
-#####session.session_delete()
+##### session.session_delete()
 BottleSessions provides `session.session_delete()`. This clears the session (like `session.clear()`), but also assures it is _removed_ from backing store immediately. This is useful in error conditions or even something like a logoff.  A delete session can't be used and will not be flushed to backing store.
-#####session.session_modified
+##### session.session_modified
 While updating session directly - say `session['username'] = 'alice'` the change to the session is detected, marking it *dirty*, and hence to flush it to backing store. Cool.
 
 Other updates to an extended session dict may not be detected.  Consider:

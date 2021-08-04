@@ -81,13 +81,13 @@ if __name__ == '__main__':
 ```
 Another sample app is [available here](examples/sample_session_app.py)
 
-####BottleSession Defaults and Tuning
+#### BottleSession Defaults and Tuning
 
 **BottleSessions** default behavior provides a session/cookie life of 300 seconds after last update using a cookie named **bottlecookie** marked `Secure` and `http-only` with `path=/`. The sessions use the same lifetime and are stored in a memory based *cachelib* **SimpleCache**.
 
 These defaults are useful for a range of micro-framework web apps Bottle is typically used for. However, different applications have differing session needs. Hence both cookies and sessions can be [easily customized](docs/OPTIONS.md) to suite a variety of uses.  
 
-####Backing Store
+#### Backing Store
 The backing store is provided by [Pallets Project *cachelib* library](https://pypi.org/project/cachelib/) and uses **SimpleCache** as the default.  
 
 *cachelib* **FileSystemCache**, **RedisCache**, and **Memcached** classes are also supported and can be configured with class specific options:

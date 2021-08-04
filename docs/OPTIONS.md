@@ -1,4 +1,4 @@
-####BottleSession Options
+#### BottleSession Options
 Though designed to be easy to use out of the box, you can still tailor **BottleSessions** for your application needs.  Specific [backing store configuration](docs/BACKING.md) can be tuned along with session behavior to suite a wide range of application needs:
  ```python
     btl = BottleSession(
