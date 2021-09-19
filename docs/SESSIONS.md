@@ -48,7 +48,7 @@ As the session object itself is never updated: the modification isn't detected b
     session.session_modified = True
 ```
 The middleware will take care of flushing changes to backing store for us.
-#####session.session_save(expire,force)
+##### session.session_save(expire,force)
 As an alternative to having the middleware flush to backing store, we can call `session.session_save()` directly in our view or other middleware:
 ```python
     session.session_save(expire=3600, force=True)
@@ -57,3 +57,5 @@ This will serialize the session data and save modified data in backing store rig
 
 This will also extend the TTL of the cookie and backing store, and allow other middleware to adjust the TTL for their needs. This is something we may have need for in some apps.
 
+##### session.session_regenerate()
+The sessions `session_id` is typically maintained by the client in a cookie. It is a good idea to rotate the `session_id` after login or other security events. `session.session_regenerate()` does this, generating a new random session identifier, associating this with the session, rendering the old session id useless.
