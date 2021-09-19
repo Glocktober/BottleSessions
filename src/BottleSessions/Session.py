@@ -106,7 +106,36 @@ class Session(dict):
     # 
     # session is marked dirty if it modifed.
     #
+    def __contains__(self, key):
+        """
+        session.__contains__()
+        
+        membership: x in session:
+        - assure the dict is loaded
+        - run the super call
+        """
+        ddprint(f'Session: contains {key}')
+
+        if not self.session_dict: self.session_lazy_load()
+
+        return super().__contains__(key)
     
+
+    def __iter__(self):
+        """
+        session.__iter__()
+
+        Iterator: For x in session:
+        - assure the dict is loaded
+        - run the super call
+        """
+        ddprint(f'Session: iter')
+
+        if not self.session_dict: self.session_lazy_load()
+
+        return super().__iter__()
+
+
     def __getitem__(self, key):
         """
         session.__getitem__()
