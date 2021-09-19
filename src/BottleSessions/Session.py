@@ -96,10 +96,10 @@ class Session(dict):
         self.session_id = session_id
 
         self.session_dict = False           # dict is loaded and valid
-        self.session_modified =  False       # dict has been modified
+        self.session_modified =  False      # dict has been modified
         self.session_deleted =  False       # dict has been deleted
 
-        self.session_is_saved = False              # useful for when to set cooikes
+        self.session_is_saved = False       # useful for when to set cooikes
 
     #
     # session is loaded from backing store and marked valid only if it is accessed.
@@ -277,7 +277,7 @@ class Session(dict):
     #     
     def session_delete(self):
         """
-        session.delete()
+        session.session_delete()
 
         Mark this session to be deleted
         - remove from backing store
@@ -296,7 +296,7 @@ class Session(dict):
 
     def session_save(self, expire=0, force=False):
         """
-        session.save_session()
+        session.session_save()
 
         Save session to backing store
         - only of not deleted set
@@ -315,4 +315,23 @@ class Session(dict):
             dprint(f'Session {self.session_id} - flushed to backing store')
         else:
             dprint(f'Session: {self.session_id} - not dirty/notflushed')
-        
+    
+
+    def session_regenerate(self):
+        """
+        session.session_regenerate()
+
+        Generate a new sessionid
+        - assure dict is valid
+        - set session_id to new id
+        - mark session dirty
+        - remove old session_id from backing store
+        """
+
+        if not self.session_dict : self.session_lazy_load()
+
+        old_session_id = self.session_id
+        self.session_id = token_urlsafe(TOKENLEN)
+        self.session_modified = True
+        self.session_backing.delete(old_session_id)
+
