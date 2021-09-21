@@ -167,7 +167,7 @@ class BottleSessions:
                 - save and close the session
             """
 
-            session = self.open_session(request)
+            session = self.open_session()
             
             # next middleware or run the view
             body =  f(*args, **kwargs)
@@ -210,9 +210,10 @@ class BottleSessions:
         """
         open_session()
 
-            - retrieves session object for cookie from backing store
+            - retrieves session cookie from request
+            - retrive session object from backing store
             - sets session_reference on request object
-            - returns session to caller
+            - return session to caller
         """
 
         key = request.get_cookie(self.cookie_name)
@@ -227,11 +228,24 @@ class BottleSessions:
         """
         close_session()
 
-            - saves changed sessions to backing store
-            - updates client cookie in each response (except in exceptions)
+            - save changed sessions to backing store
+            - updates client cookie in each response
         """
         # save the session
         session.session_save(expire=self.cookie_expire)
 
         # Add the Set-Cookie header        
-        self.set_session_cookie(session)
+        if session.session_is_saved or session.session_deleted:
+            # why bother reset the cookie life if we don't write clean 
+            # sessions to the backing store?
+
+            t = -1 if session.session_deleted else self.cookie_expire
+            
+            response.set_cookie(
+                name=self.cookie_name,
+                value=session.session_id,
+                max_age = t,
+                httponly = True,
+                path = self.session_path,
+                secure = self.cookie_secure
+            )
