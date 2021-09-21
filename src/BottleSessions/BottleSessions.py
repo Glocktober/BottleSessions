@@ -162,30 +162,21 @@ class BottleSessions:
         def session_wrapper(*args, **kwargs):
             """
             Middleware code in request path
-            - retrieves session object for cookie from backing store
-            - sets session_reference on request object
-            - saves changed sessions to backing store
-            - updates client cookie in each response (except in exceptions)
+                - open the session
+                - call the view
+                - save and close the session
             """
 
-            # find or create a session based on the requests cookies
-            key = request.get_cookie(self.cookie_name)
-            session = Session(backing=self.backing, session_id=key)
-            dprint('initiated session')
-            # attach to request for use by views or successive middleware            
-            setattr(request, self.name, session)
-            dprint('attached')
+            session = self.open_session(request)
+            
             # next middleware or run the view
             body =  f(*args, **kwargs)
-            
-            # save the session
-            session.session_save(expire=self.cookie_expire)
 
-            # Add the Set-Cookie header        
-            self.set_session_cookie(session)
+            self.close_session(session)
             
             return body
 
+        session_wrapper.__name__ = f.__name__
         return session_wrapper
 
 
@@ -214,3 +205,33 @@ class BottleSessions:
                 secure = self.cookie_secure
             )
 
+
+    def open_session(self):
+        """
+        open_session()
+
+            - retrieves session object for cookie from backing store
+            - sets session_reference on request object
+            - returns session to caller
+        """
+
+        key = request.get_cookie(self.cookie_name)
+        session = Session(backing=self.backing, session_id=key)
+        
+        # attach to request for use by views or successive middleware            
+        setattr(request, self.name, session)
+        return session
+    
+
+    def close_session(self,session):
+        """
+        close_session()
+
+            - saves changed sessions to backing store
+            - updates client cookie in each response (except in exceptions)
+        """
+        # save the session
+        session.session_save(expire=self.cookie_expire)
+
+        # Add the Set-Cookie header        
+        self.set_session_cookie(session)
